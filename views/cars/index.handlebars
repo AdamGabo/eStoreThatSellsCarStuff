@@ -19,38 +19,35 @@
       <h4 class=" text-center">Search Inventory</h4>
 
 
-        <form class="row mt-5 " action="">
+        <form id="search-form" class="row mt-5 " action="/cars">
 
-            <div class="dropdown col-md-3 align-items-center ">
-            <button class="w-100 btn btn-light btn-lg dropdown-toggle" type="button" id="year-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-              All year
-            </button>
-              <ul class="dropdown-menu " aria-labelledby="year-toggle">
-                  {{!-- Expects years from the api  --}}
-              </ul>
-            </div>
-            <div class="dropdown col-md-3">
-            <button class="w-100 btn btn-light btn-lg dropdown-toggle" id="make-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              All make
-            </button>
-              <ul class="dropdown-menu" aria-labelledby="make-toggle">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">For make</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-              </ul>
-            </div>
-            <div class="dropdown col-md-3">
-            <button class="w-100 btn btn-light btn-lg dropdown-toggle" id="model-toggle"  type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              All models
-            </button>
-              <ul class="dropdown-menu" aria-labelledby="model-toggle">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">For model</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-              </ul>
+          {{!-- year --}}
+             <div class="dropdown col-md-3">
+              <select name="year" class="form-select btn-light btn btn-lg" id="year-toggle">
+                 <option disabled hidden selected>All years</option>
+                 {{!-- year options go here --}}
+              </select>
             </div>
 
-            <button id="search-filter" type="submit" class="btn btn-danger col-md-2">
+            {{!-- make --}}
+            <div class="dropdown col-md-3">
+              <select name="make" class="form-select btn-light btn btn-lg" id="make-toggle" aria-label="Default select example" disabled>
+                <option disabled hidden selected>All makes</option>
+                  {{!-- make options go here --}}
+              </select>
+            </div>
+
+            {{!-- model --}}
+            <div class="dropdown col-md-3">
+              <select name="model" class="form-select btn-light btn btn-lg" id="model-toggle" aria-label="Default select example">
+                <option disabled hidden selected>All models</option>
+                  {{!-- model options go here  --}}
+              </select>
+            </div>
+   
+ 
+             {{!-- search button --}}
+            <button id="search-filter" type="submit" class="btn btn-danger col-md-2" disabled>
              <i class="fa fa-search mr-2"></i>
              Search
             </button>
@@ -74,4 +71,4 @@
 
 </main>
 
-<script src="./javascript/home.js"></script>
+<script  src="./javascript/home.js"></script>

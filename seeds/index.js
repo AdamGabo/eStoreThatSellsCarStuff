@@ -15,6 +15,7 @@ const seedAll = async () => {
 
   await seedOrderDetails();
 
+  process.exit();
 };
 
 seedAll();

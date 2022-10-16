@@ -3,29 +3,30 @@ const { Vehicle } = require('../models');
 module.exports.findVehicle = async (req,res) => {
 
     /**
-     * Expect http://localhost:3001/api/cars?make=something,model...
+     * Expect http://localhost:3001/api/cars?car_make=something,model...
      */
 
     const { car_model, car_make, year} = req.query;
 
-    if(car_make || car_model || year){
-          try{
-      const values = {}
-        if(year){
-            values.year = year            
-        }
+    if(car_make || car_model){
+    try{
+      const values = { year }
+      const attributes = []
 
         if(car_make){
             values.car_make = car_make
+            attributes[0] = "car_make"
         }
 
         if(car_model){
             values.car_model = car_model
+            attributes[1] = "car_model"
         }
 
 
         const cars = await Vehicle.findAll({
             where : values,
+            attributes 
         })
     
         if(!cars.length){
@@ -51,6 +52,61 @@ module.exports.findVehicle = async (req,res) => {
     
 }
 
+module.exports.findVehicleApi = async (req,res) => {
+
+    /**
+     * Expect http://localhost:3001/api/cars?car_make=something,model...
+     */
+
+    const { car_model, car_make, year} = req.query;
+
+    if(car_make || car_model || year){
+    try{
+      const values = { }
+      const attributes = ['vehicle_id']
+
+       if(year){
+        values.year = year
+         attributes[1] = "year"
+       }
+
+        if(car_make){
+            values.car_make = car_make
+            attributes[2] = "car_make"
+        }
+
+        if(car_model){
+            values.car_model = car_model
+            attributes[3] = "car_model"
+        }
+
+
+        const cars = await Vehicle.findAll({
+            where : values,
+        })
+    
+        if(!cars.length){
+          return res
+            .status(404)
+            .json({message: 'There are no vehicles with this specification'})
+        }
+    
+         res.json(cars);
+        }
+
+          catch(err){
+            return res 
+            .status(500)
+            .json({message: "Something went wrong with the server", err})
+          }
+        }
+    
+    else{
+       await this.getAllCarsApi(req,res)
+    }
+          
+    
+}
 
 /*
 *Expect "2003": {
@@ -82,7 +138,7 @@ module.exports.getYears = async(req,res) => {
         }
     })
 
-    res.json(carFormat)
+    return res.json(carFormat)
  }
  catch(err){
     return res
@@ -94,76 +150,28 @@ module.exports.getYears = async(req,res) => {
 
 }
 
-module.exports.getMakes = async(req,res) => {
-    try{
-       const cars = await Vehicle.findAll({
-           attributes: ['car_make'],
-           raw: true
-       });
-   
-       const carFormat = {}
-   
-   
-       cars.forEach(car => {
-           if(car.car_make in carFormat){
-               carFormat[car.car_make].quantity += 1
-           }
-           else{
-               carFormat[car.car_make] = {
-                   car_make: car.car_make,
-                   quantity : 1
-               }
-           }
-       })
-   
-       res.json(carFormat)
-    }
-    catch(err){
-       return res
-       .status(500)
-       .json({message: "Something went wrong with our server"})
-    }
-    
-   
-   
-}
 
-module.exports.getModels = async(req,res) => {
-    try{
-       const cars = await Vehicle.findAll({
-           attributes: ['car_model'],
-           raw: true
-       });
-   
-       const carFormat = {}
-   
-   
-       cars.forEach(car => {
-           if(car.car_model in carFormat){
-               carFormat[car.car_model].quantity += 1
-           }
-           else{
-               carFormat[car.car_model] = {
-                   car_model: car.car_model,
-                   quantity : 1
-               }
-           }
-       })
-   
-       res.json(carFormat)
-    }
-    catch(err){
-       return res
-       .status(500)
-       .json({message: "Something went wrong with our server"})
-    }
-}
+
 module.exports.getAllCars = async(req,res) => {
     try{
        const cars = await Vehicle.findAll({raw: true });
 
 
        res.render('cars/cars', {...req.session, cars })
+    }
+    catch(err){
+       return res
+       .status(500)
+       .json({message: "Something went wrong with our server"})
+    }
+   }
+
+module.exports.getAllCarsApi = async(req,res) => {
+    try{
+       const cars = await Vehicle.findAll({raw: true });
+
+
+       res.json(cars);
     }
     catch(err){
        return res

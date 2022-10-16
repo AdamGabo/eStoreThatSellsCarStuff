@@ -1,67 +1,117 @@
-const yearDropDown = document.getElementById('year-toggle');
 
 
-{/* <li><a class="dropdown-item" href="#">Action</a></li>
-<li><a class="dropdown-item" href="#">Same here~!!!</a></li>
-<li><a class="dropdown-item" href="#">Something else here</a></li> */}
+const searchForm = document.getElementById('search-form');
 
-const yearUrl = String(location.href + 'api/cars/year');
-const makeUrl = String(location.href + 'api/cars/makes')
-// const  url =  api.replace('/#/', '')
+const yearToggle = document.getElementById('year-toggle');
+const makeToggle = document.getElementById('make-toggle');
+const modelToggle = document.getElementById('model-toggle'); 
 
-async function getYearData(){
-    const res = await fetch(yearUrl,{
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    });
 
-    const years = await res.json();
-    
-    //create options from the list of years
-    createYearsOptions(years)
-    
+searchForm.addEventListener('click', searchCars)
 
-}
-async function getMakeData(){
-    const res = await fetch(yearUrl,{
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    });
-
-    const years = await res.json();
-    console.log(years)
-    //create options from the list of years
-    createMakesOptions(years)
-    
-
-}
-
-function createMakesOptions(makes){
-    const makeList = document.querySelector('[aria-labelledby="model-toggle"]');
-
-    //To Clear all previous makes
-    makeList.textContent = ''
-
-    for(const [key,value] of Object.entries(makes)){
-        const li = document.createElement('li');
-       
-        li.innerHTML = `<a class="dropdown-item" href="/cars/${value.id}">${value.car_year}(${value.quantity})</a>`
-         yearList.append(li)
+async function searchCars(e){
+    e.preventDefault();
+ 
+    if(e.target.id === 'year-toggle'){
+        yearInit();
+    }
+    if(yearToggle.value !== 'All years'){
+        getMakeData();
+    }
+    if(modelToggle.value){
+        // setModelData();
     }
 }
 
-function createYearsOptions(years){
-    const yearList = document.querySelector('[aria-labelledby="year-toggle"]');
-    
-    //To clear all previous years
-    yearList.textContent = ''
 
-    for(const [key,value] of Object.entries(years)){
-         const li = document.createElement('li');
-         li.innerHTML = `<a class="dropdown-item" href="">${value.car_year}(${value.quantity})</a>`
-          yearList.append(li)
+function yearInit(){
+    
+    const app = {};
+    app.yearDropDown = yearToggle;
+
+    app.getYearData = async function getYearData(e){
+         
+        if(app.yearDropDown.childElementCount === 1){
+            const res = await fetch('api/cars/year',{
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+                
+        const carYears = await res.json();
+
+    
         
+        //create options from the list of years
+        app.createYearsOptions(carYears)
+        }
+
+
     }
+    
+    app.createYearsOptions = function(years){ 
+        //To clear all pre('#year-options')vious years                
+        this.yearDropDown.innerHTML = '<option disabled hidden selected>All years</option>'
+
+        
+    
+        for(const [key,value] of Object.entries(years)){
+             const option = document.createElement('option');
+             option.value = value.car_year
+             option.innerText = `${value.car_year}(${value.quantity})`
+             app.yearDropDown.append(option)
+            
+        }
+        return;
+    }
+
+    return app.getYearData();
 }
 
-yearDropDown.addEventListener('click' , getYearData)
+function getMakeData(){
+   
+    const year = yearToggle.value;
+ 
+   const app = {};
+ 
+   app.fetchMakeData = async function(){
+     makeToggle.removeAttribute('disabled')
+    
+     //Checking if the fetch request has already been made
+  
+     if(makeToggle.childElementCount === 1){
+  
+      // http://localhost:3001/api/cars?year= yearVariable
+  
+      const res = await fetch('api/cars?' + new URLSearchParams({
+          year
+      }),{
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+      });
+  
+      const make = await res.json()
+     console.log(make)
+     makeToggle.innerHTML = '<option disabled hidden selected>All Makes --</option>'
+    // createMakeOptions(make)
+  
+  
+   }
+   }
+ 
+   app.createMakeOptions = function(make){
+       makeToggle.innerHTML = '<option disabled hidden selected>All Makes</option>'
+    
+       make.forEach(car => {
+        //To clear all pre('#make-options')vious years                
+        const option = document.createElement('option');
+        option.value = car.car_make
+        option.innerText = `${car.car_make}`
+        makeToggle.append(option)
+          
+     })
+
+
+    }
+
+    app.fetchMakeData();
+ }

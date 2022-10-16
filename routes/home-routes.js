@@ -19,8 +19,6 @@ router.route('/register')
 router.route('/logout')
       .get(isLoggedIn,userController.logout)
 
-router.route('/cars')
-      .get(filterController.findVehicle)
 
 
 
